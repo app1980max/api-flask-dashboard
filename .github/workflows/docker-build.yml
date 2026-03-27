@@ -44,6 +44,10 @@ jobs:
       - name: Test cluster
         run: kubectl get svc
 
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f k8s/deployment.yaml
+      
       - name: Deploy to Kubernetes
         run: |
           kubectl set image deployment/api-flask-dashboard \
