@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-dashboard
+  template:
+    metadata:
+      labels:
+        app: flask-dashboard
+    spec:
+      containers:
+        - name: flask-dashboard
+          image: yevgenis2006/flask-dashboard:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-dashboard
+spec:
+  selector:
+    app: flask-dashboard
+  ports:
+    - port: 80
+      targetPort: 5000
