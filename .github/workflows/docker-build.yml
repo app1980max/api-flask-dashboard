@@ -44,13 +44,18 @@ jobs:
       - name: Test cluster
         run: kubectl get svc
 
-      - name: Apply Kubernetes manifests
+      - name: Apply Kubernetes Manifests
         run: |
           kubectl apply -f deploy/flask-dashboard.yaml
-      
-      - name: Deploy to Kubernetes
-        run: |
-          kubectl set image deployment/api-flask-dashboard \
-          api-flask-dashboard=${{ secrets.DOCKERHUB_USERNAME }}/api-flask-dashboard:${{ github.sha }}
 
-          kubectl rollout status deployment/api-flask-dashboard --timeout=120s
+      - name: Update deployment image and rollout
+        run: |
+          set -e
+          kubectl set image deployment/api-flask-dashboard \
+            api-flask-dashboard=$IMAGE
+          kubectl rollout status deployment/api-flask-dashboard --timeout=180s
+          
+      - name: Verify deployment
+        run: |
+          kubectl get deployment api-flask-dashboard
+          kubectl get pods -l app=api-flask-dashboard  
