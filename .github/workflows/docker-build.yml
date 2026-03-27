@@ -52,7 +52,7 @@ jobs:
         run: |
           set -e
           kubectl set image deployment/api-flask-dashboard \
-            api-flask-dashboard=$IMAGE
+            flask-app=$IMAGE
           kubectl rollout status deployment/api-flask-dashboard --timeout=180s
           
       - name: Verify deployment
