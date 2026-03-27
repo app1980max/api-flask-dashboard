@@ -51,8 +51,8 @@ jobs:
       - name: Update deployment image and rollout
         run: |
           set -e
-          kubectl set image deployment/api-flask-dashboard \
-            flask-app=$IMAGE
+          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/api-flask-dashboard:${{ github.sha }}
+          kubectl set image deployment/api-flask-dashboard flask-app=$IMAGE
           kubectl rollout status deployment/api-flask-dashboard --timeout=180s
           
       - name: Verify deployment
