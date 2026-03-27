@@ -29,5 +29,5 @@ jobs:
           file: Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/flask-dashboard:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/flask-dashboard:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/api-flask-dashboard:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/api-flask-dashboard:${{ github.sha }}
