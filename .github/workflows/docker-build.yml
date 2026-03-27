@@ -31,3 +31,22 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/api-flask-dashboard:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/api-flask-dashboard:${{ github.sha }}
+
+      # ✅ Kubernetes steps MUST be here
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Set kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+
+      - name: Test cluster
+        run: kubectl get nodes
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl set image deployment/api-flask-dashboard \
+          api-flask-dashboard=${{ secrets.DOCKERHUB_USERNAME }}/api-flask-dashboard:${{ github.sha }}
+
+          kubectl rollout status deployment/api-flask-dashboard --timeout=120s
