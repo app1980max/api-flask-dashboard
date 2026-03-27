@@ -13,7 +13,7 @@ spec:
         app: api-flask-dashboard
     spec:
       containers:
-        - name: flask-dashboard
+        - name: flask-app
           image: virtapp/api-flask-dashboard:latest
           imagePullPolicy: Always
           ports:
