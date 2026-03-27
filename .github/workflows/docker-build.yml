@@ -46,7 +46,7 @@ jobs:
 
       - name: Apply Kubernetes manifests
         run: |
-          kubectl apply -f deployment/flask-dashboard.yaml
+          kubectl apply -f deploy/flask-dashboard.yaml
       
       - name: Deploy to Kubernetes
         run: |
