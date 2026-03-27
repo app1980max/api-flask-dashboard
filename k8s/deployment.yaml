@@ -30,3 +30,29 @@ spec:
   ports:
     - port: 80
       targetPort: 5000
+
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: flask-dashboard
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  tls:
+    - hosts:
+        - app-cluster1.appflex.io
+      secretName: flask-dashboard-tls
+  rules:
+    - host: app-cluster1.appflex.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: flask-dashboard
+                port:
+                  number: 80
