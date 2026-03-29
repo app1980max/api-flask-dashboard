@@ -1,6 +1,5 @@
 <img width="1884" height="807" alt="image" src="https://github.com/user-attachments/assets/693e1fbb-0c18-4859-a84e-a0aedefd72b8" />
 
-
 # 🚀 API Hub - Modern Multi-API Dashboard
 A beautiful, modern web application built with Flask that aggregates data from multiple APIs into one stunning, interactive dashboard. No database required for basic features - everything runs in your browser!
 
