@@ -35,6 +35,7 @@ A beautiful, modern web application built with Flask that aggregates data from m
 | XSS Protection | Jinja2 auto-escaping|
 ---
 
+
 ## 🎨 Design Highlights
 
 - ✨ **Modern Glassmorphism UI** - Frosted-glass effect cards
