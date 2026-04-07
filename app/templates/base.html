@@ -317,6 +317,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if active_page == 'crypto' %}active{% endif %}" 
+                           href="{{ url_for('crypto.crypto_home') }}">
+                            <i class="fab fa-bitcoin"></i> Crypto1
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {% if active_page == 'github' %}active{% endif %}" 
                            href="{{ url_for('github.github_home') }}">
                             <i class="fab fa-github"></i> GitHub
