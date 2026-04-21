@@ -43,10 +43,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - app-cluster1.appflex.io
+        - __HOST__
       secretName: flask-dashboard-tls
   rules:
-    - host: app-cluster1.appflex.io
+    - host: __HOST__
       http:
         paths:
           - path: /
