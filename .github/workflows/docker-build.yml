@@ -58,9 +58,14 @@ jobs:
           kubectl config current-context
           kubectl get nodes
 
+      - name: Render manifest
+        run: |
+          HOST=app-${{ matrix.cluster.name }}.appflex.io
+          sed "s|__HOST__|$HOST|g" deploy/flask-dashboard.yaml > deploy/rendered.yaml
+    
       - name: Apply Kubernetes Manifests
         run: |
-          kubectl apply -f deploy/flask-dashboard.yaml -n ${{ matrix.cluster.namespace }}
+          kubectl apply -f deploy/rendered.yaml -n ${{ matrix.cluster.namespace }}
 
       - name: Update deployment image and rollout
         run: |
