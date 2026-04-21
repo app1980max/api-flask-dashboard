@@ -49,7 +49,7 @@ jobs:
       - name: Set kubeconfig
         run: |
           mkdir -p $HOME/.kube
-          echo "${{ secrets[matrix.cluster.kubeconfig] }}" | base64 -d > $HOME/.kube/config
+          echo "${{ secrets[matrix.cluster.kubeconfig] }}" > $HOME/.kube/config
 
       - name: Show cluster (important!)
         run: |
