@@ -1,6 +1,5 @@
-
 """
-Projects Routes
+GitHub Routes
 """
 from flask import Blueprint, render_template, jsonify, request
 from app.api.github_api import GitHubAPI
