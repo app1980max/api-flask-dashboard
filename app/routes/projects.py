@@ -1,58 +1,151 @@
 """
-GitHub Routes
+Projects Routes Blueprint
 """
 from flask import Blueprint, render_template, jsonify, request
-from app.api.github_api import GitHubAPI
+import logging
 
-github_bp = Blueprint('github', __name__)
-github_api = GitHubAPI()
+from app.api.projects_api import ProjectsAPI
 
-@github_bp.route('/')
+projects_bp = Blueprint('projects', __name__)
+projects_api = ProjectsAPI()
+
+logger = logging.getLogger(__name__)
+
+
+# -----------------------------
+# UI ROUTES
+# -----------------------------
+
+@projects_bp.route('/')
 def index():
-    """GitHub home page"""
-    return render_template('github.html',
-                         title='GitHub Explorer',
-                         active_page='github')
+    """Projects home page"""
+    return render_template(
+        'projects.html',
+        title='Projects Explorer',
+        active_page='projects'
+    )
 
-@github_bp.route('/home')
-def github_home():
-    """Alias for github home (required by templates)"""
+
+@projects_bp.route('/home')
+def projects_home():
+    """Alias for projects home (template compatibility)"""
     return index()
 
-@github_bp.route('/api/trending')
-def api_trending():
-    """API endpoint for trending repos"""
-    language = request.args.get('language')
-    since = request.args.get('since', 'daily')
-    limit = request.args.get('limit', 30, type=int)
-    
-    try:
-        repos = github_api.get_trending_repos(language, since, limit)
-        return jsonify({'success': True, 'repositories': repos})
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
 
-@github_bp.route('/api/search/repositories')
-def api_search():
-    """API endpoint for searching repos"""
-    query = request.args.get('q')
+# -----------------------------
+# API ROUTES
+# -----------------------------
+
+@projects_bp.route('/api/projects')
+def api_get_projects():
+    """Get list of projects with optional filters"""
+
+    try:
+        status = request.args.get('status')          # e.g. active, archived
+        owner = request.args.get('owner')
+        limit = request.args.get('limit', 20, type=int)
+        page = request.args.get('page', 1, type=int)
+
+        # basic validation
+        if limit > 100:
+            return jsonify({
+                'success': False,
+                'error': 'Limit cannot exceed 100'
+            }), 400
+
+        result = projects_api.get_projects(
+            status=status,
+            owner=owner,
+            limit=limit,
+            page=page
+        )
+
+        return jsonify({
+            'success': True,
+            'data': result
+        })
+
+    except Exception:
+        logger.exception("Failed to fetch projects")
+        return jsonify({
+            'success': False,
+            'error': 'Internal server error'
+        }), 500
+
+
+@projects_bp.route('/api/projects/search')
+def api_search_projects():
+    """Search projects by keyword"""
+
+    query = request.args.get('q', '').strip()
     if not query:
-        return jsonify({'success': False, 'error': 'Query required'}), 400
-    
-    try:
-        repos = github_api.search_repositories(query)
-        return jsonify({'success': True, 'results': repos})
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+        return jsonify({
+            'success': False,
+            'error': 'Query parameter "q" is required'
+        }), 400
 
-@github_bp.route('/api/repo/<owner>/<repo>')
-def api_repo(owner, repo):
-    """API endpoint for repo details"""
     try:
-        result = github_api.get_repository(owner, repo)
-        if result:
-            return jsonify({'success': True, 'repository': result})
-        else:
-            return jsonify({'success': False, 'error': 'Repository not found'}), 404
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+        page = request.args.get('page', 1, type=int)
+
+        results = projects_api.search_projects(
+            query=query,
+            page=page
+        )
+
+        return jsonify({
+            'success': True,
+            'data': results
+        })
+
+    except Exception:
+        logger.exception("Project search failed")
+        return jsonify({
+            'success': False,
+            'error': 'Internal server error'
+        }), 500
+
+
+@projects_bp.route('/api/projects/<project_id>')
+def api_get_project(project_id):
+    """Get single project details"""
+
+    try:
+        project = projects_api.get_project_by_id(project_id)
+
+        if not project:
+            return jsonify({
+                'success': False,
+                'error': 'Project not found'
+            }), 404
+
+        return jsonify({
+            'success': True,
+            'data': project
+        })
+
+    except Exception:
+        logger.exception(f"Failed to fetch project {project_id}")
+        return jsonify({
+            'success': False,
+            'error': 'Internal server error'
+        }), 500
+
+
+@projects_bp.route('/api/projects/stats')
+def api_project_stats():
+    """Get aggregated project statistics"""
+
+    try:
+        stats = projects_api.get_project_stats()
+
+        return jsonify({
+            'success': True,
+            'data': stats
+        })
+
+    except Exception:
+        logger.exception("Failed to fetch project stats")
+        return jsonify({
+            'success': False,
+            'error': 'Internal server error'
+        }), 500
