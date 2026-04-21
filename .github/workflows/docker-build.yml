@@ -9,6 +9,16 @@ jobs:
   docker:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        cluster:
+          - name: dev
+            kubeconfig: KUBE_CONFIG_DEV
+            namespace: default
+          - name: prod
+            kubeconfig: KUBE_CONFIG_PROD
+            namespace: default
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,30 +42,35 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/api-flask-dashboard:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/api-flask-dashboard:${{ github.sha }}
 
-      # ✅ Kubernetes steps MUST be here
+      # 🔽 Per-cluster deployment starts here
       - name: Setup kubectl
         uses: azure/setup-kubectl@v4
 
       - name: Set kubeconfig
         run: |
           mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+          echo "${{ secrets[matrix.cluster.kubeconfig] }}" | base64 -d > $HOME/.kube/config
 
-      - name: Test cluster
-        run: kubectl get svc
+      - name: Show cluster (important!)
+        run: |
+          kubectl config current-context
+          kubectl get nodes
 
       - name: Apply Kubernetes Manifests
         run: |
-          kubectl apply -f deploy/flask-dashboard.yaml
+          kubectl apply -f deploy/flask-dashboard.yaml -n ${{ matrix.cluster.namespace }}
 
       - name: Update deployment image and rollout
         run: |
           set -e
           IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/api-flask-dashboard:${{ github.sha }}
-          kubectl set image deployment/api-flask-dashboard flask-app=$IMAGE
-          kubectl rollout status deployment/api-flask-dashboard --timeout=180s
-          
+
+          kubectl set image deployment/api-flask-dashboard flask-app=$IMAGE -n ${{ matrix.cluster.namespace }}
+          kubectl rollout restart deployment/api-flask-dashboard -n ${{ matrix.cluster.namespace }}
+          kubectl rollout status deployment/api-flask-dashboard -n ${{ matrix.cluster.namespace }} --timeout=180s
+
       - name: Verify deployment
         run: |
-          kubectl get deployment api-flask-dashboard
-          kubectl get pods -l app=api-flask-dashboard  
+          kubectl get deployment api-flask-dashboard -n ${{ matrix.cluster.namespace }}
+          kubectl get pods -l app=api-flask-dashboard -n ${{ matrix.cluster.namespace }}
+
