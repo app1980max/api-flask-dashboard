@@ -4,7 +4,6 @@
 
 {% block content %}
 <div class="container">
-
     <!-- Hero Section -->
     <div class="row mb-5 text-center animate-in">
         <div class="col-12">
@@ -12,16 +11,38 @@
                 <i class="fas fa-rocket"></i> Welcome to API Hub
             </h1>
             <p class="hero-subtitle">
-                Real-time data, crypto insights, and developer projects in one place
+                Real-time data from multiple APIs in one beautiful place
             </p>
         </div>
     </div>
 
-    <!-- Quick Stats (Projects + Crypto only) -->
+    <!-- Quick Stats -->
     <div class="row g-4 mb-5">
-
-        <!-- Crypto -->
-        <div class="col-md-6 animate-in">
+        <div class="col-md-3 animate-in">
+            <div class="stat-card text-center">
+                <div class="stat-icon">
+                    <i class="fas fa-newspaper"></i>
+                </div>
+                <div class="stat-value" id="news-count">
+                    <div class="spinner-border spinner-border-sm"></div>
+                </div>
+                <div class="stat-label">Latest News</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 animate-in" style="animation-delay: 0.1s;">
+            <div class="stat-card text-center">
+                <div class="stat-icon">
+                    <i class="fas fa-thermometer-half"></i>
+                </div>
+                <div class="stat-value" id="weather-temp">
+                    <div class="spinner-border spinner-border-sm"></div>
+                </div>
+                <div class="stat-label">Temperature</div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 animate-in" style="animation-delay: 0.2s;">
             <div class="stat-card text-center">
                 <div class="stat-icon">
                     <i class="fab fa-bitcoin"></i>
@@ -29,23 +50,21 @@
                 <div class="stat-value" id="btc-price">
                     <div class="spinner-border spinner-border-sm"></div>
                 </div>
-                <div class="stat-label">Bitcoin Price</div>
+                <div class="stat-label">Bitcoin</div>
             </div>
         </div>
-
-        <!-- Projects -->
-        <div class="col-md-6 animate-in" style="animation-delay: 0.1s;">
+        
+        <div class="col-md-3 animate-in" style="animation-delay: 0.3s;">
             <div class="stat-card text-center">
                 <div class="stat-icon">
-                    <i class="fas fa-code"></i>
+                    <i class="fab fa-github"></i>
                 </div>
-                <div class="stat-value" id="projects-count">
+                <div class="stat-value" id="github-repos">
                     <div class="spinner-border spinner-border-sm"></div>
                 </div>
-                <div class="stat-label">Projects</div>
+                <div class="stat-label">Trending</div>
             </div>
         </div>
-
     </div>
 
     <!-- Main Content -->
