@@ -2,8 +2,10 @@ name: Build & Push Docker Image
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+    paths:
+      - "Dockerfile"
+      - "deploy/**"
 
 jobs:
   docker:
